@@ -6,8 +6,14 @@ const { glob } = require('glob');
 const ora = require('ora');
 const FileHelper = require('../utils/file-helper');
 const UIHelper = require('../utils/ui-helper');
+const ErrorHandler = require('../utils/error-handler');
 
 class ExploreCommands {
+    constructor(config, logger) {
+        this.config = config;
+        this.logger = logger;
+    }
+
     async list(targetPath = '.', options = {}) {
         const spinner = ora('Escaneando directorio...').start();
 
@@ -45,9 +51,10 @@ class ExploreCommands {
             console.log(chalk.gray(`\nTotal: ${filtered.length} elementos\n`));
 
             this.showSuggestions(filtered);
+            this.logger.info(`Listado directorio: ${fullPath}`);
 
         } catch (error) {
-            spinner.fail(chalk.red(`Error: ${error.message}`));
+            ErrorHandler.handle(error, spinner);
         }
     }
 
@@ -93,6 +100,7 @@ class ExploreCommands {
 
         await this.printTree(fullPath, '', 0, maxDepth);
         console.log('');
+        this.logger.info(`Árbol mostrado para: ${fullPath}`);
     }
 
     async printTree(dirPath, prefix, depth, maxDepth) {
@@ -154,11 +162,12 @@ class ExploreCommands {
             });
 
             console.log(chalk.gray(`\nTotal: ${files.length} archivos\n`));
+            this.logger.info(`Búsqueda realizada: ${pattern}`);
 
         } catch (error) {
-            spinner.fail(chalk.red(`Error: ${error.message}`));
+            ErrorHandler.handle(error, spinner);
         }
     }
 }
 
-module.exports = new ExploreCommands();
+module.exports = ExploreCommands;

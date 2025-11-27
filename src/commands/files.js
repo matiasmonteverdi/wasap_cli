@@ -1,15 +1,18 @@
 const FileHelper = require('../utils/file-helper');
 const UIHelper = require('../utils/ui-helper');
 const Validation = require('../utils/validation');
-const Logger = require('../utils/logger');
+const ErrorHandler = require('../utils/error-handler');
 const inquirer = require('inquirer');
 const chalk = require('chalk');
 const ora = require('ora');
 const open = require('open');
 
-const logger = new Logger();
-
 class FileCommands {
+    constructor(config, logger) {
+        this.config = config;
+        this.logger = logger;
+    }
+
     async open(file) {
         const spinner = ora('Abriendo archivo...').start();
 
@@ -23,10 +26,10 @@ class FileCommands {
 
             await open(fullPath);
             spinner.succeed(chalk.green('✅ Archivo abierto'));
-            logger.success(`Archivo abierto: ${file}`);
+            this.logger.success(`Archivo abierto: ${file}`);
 
         } catch (error) {
-            spinner.fail(chalk.red(`Error: ${error.message}`));
+            ErrorHandler.handle(error, spinner);
         }
     }
 
@@ -41,7 +44,7 @@ class FileCommands {
             UIHelper.displayFileContent(file, content, options.lines);
 
         } catch (error) {
-            spinner.fail(chalk.red(`Error: ${error.message}`));
+            ErrorHandler.handle(error, spinner);
         }
     }
 
@@ -70,9 +73,10 @@ class FileCommands {
 
             await FileHelper.copyFile(srcPath, dstPath);
             spinner.succeed(chalk.green('✅ Archivo copiado exitosamente'));
+            this.logger.success(`Archivo copiado: ${source} -> ${destination}`);
 
         } catch (error) {
-            spinner.fail(chalk.red(`Error: ${error.message}`));
+            ErrorHandler.handle(error, spinner);
         }
     }
 
@@ -85,9 +89,10 @@ class FileCommands {
 
             await FileHelper.moveFile(srcPath, dstPath);
             spinner.succeed(chalk.green('✅ Archivo movido exitosamente'));
+            this.logger.success(`Archivo movido: ${source} -> ${destination}`);
 
         } catch (error) {
-            spinner.fail(chalk.red(`Error: ${error.message}`));
+            ErrorHandler.handle(error, spinner);
         }
     }
 
@@ -112,10 +117,11 @@ class FileCommands {
         try {
             await FileHelper.deleteFile(fullPath);
             spinner.succeed(chalk.green('✅ Archivo eliminado'));
+            this.logger.success(`Archivo eliminado: ${file}`);
         } catch (error) {
-            spinner.fail(chalk.red(`Error: ${error.message}`));
+            ErrorHandler.handle(error, spinner);
         }
     }
 }
 
-module.exports = new FileCommands();
+module.exports = FileCommands;

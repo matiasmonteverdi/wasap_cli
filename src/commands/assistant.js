@@ -1,9 +1,12 @@
 const chalk = require('chalk');
 const ora = require('ora');
 const NLP = require('../utils/nlp');
+const ErrorHandler = require('../utils/error-handler');
 
 class AssistantCommands {
-    constructor() {
+    constructor(config, logger) {
+        this.config = config;
+        this.logger = logger;
         this.nlp = new NLP();
     }
 
@@ -21,28 +24,33 @@ class AssistantCommands {
             console.log('\n' + chalk.cyan('🤖 Asistente:\n'));
             console.log(chalk.white(response));
             console.log('');
+            this.logger.info(`Pregunta al asistente: ${question}`);
 
         } catch (error) {
-            spinner.fail(chalk.red(`Error: ${error.message}`));
+            ErrorHandler.handle(error, spinner);
         }
     }
 
     suggest() {
-        const suggestions = [
-            'wa ls --type picture - Para ver solo imágenes',
-            'wa tree - Para ver la estructura de carpetas',
-            'wa fav-add . - Para guardar esta ubicación',
-            'wa find "*.txt" - Para buscar archivos de texto'
-        ];
+        try {
+            const suggestions = [
+                'wa ls --type picture - Para ver solo imágenes',
+                'wa tree - Para ver la estructura de carpetas',
+                'wa fav-add . - Para guardar esta ubicación',
+                'wa find "*.txt" - Para buscar archivos de texto'
+            ];
 
-        console.log('\n' + chalk.cyan('💡 Sugerencias:\n'));
+            console.log('\n' + chalk.cyan('💡 Sugerencias:\n'));
 
-        suggestions.forEach((suggestion, i) => {
-            console.log(chalk.gray(`${i + 1}.`) + ' ' + chalk.white(suggestion));
-        });
+            suggestions.forEach((suggestion, i) => {
+                console.log(chalk.gray(`${i + 1}.`) + ' ' + chalk.white(suggestion));
+            });
 
-        console.log('');
+            console.log('');
+        } catch (error) {
+            ErrorHandler.handle(error);
+        }
     }
 }
 
-module.exports = new AssistantCommands();
+module.exports = AssistantCommands;

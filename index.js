@@ -5,7 +5,7 @@ const Config = require('./src/utils/config');
 const Logger = require('./src/utils/logger');
 const Achievements = require('./src/utils/achievements');
 
-// Importar comandos
+// Importar clases de comandos
 const FileCommands = require('./src/commands/files');
 const FolderCommands = require('./src/commands/folders');
 const ExploreCommands = require('./src/commands/explore');
@@ -16,15 +16,13 @@ const SystemCommands = require('./src/commands/system');
 const EasterEggs = require('./src/commands/eastereggs');
 
 const WINASSIST_BANNER = `
-W_W_A_A_S_S_I_S_T
-\\\\ \\\\/ / | |/ _\` |
- \\\\  /| | | (_| |
-  \\\\/ |_|_|\\\\__,_|
-
-  _ __ ___   __ _ _ __ ___  
- | '_ \` _ \\\\ / _\` | '_ \` _ \\\\ 
- | | | | | | (_| | | | | | |
- |_| |_| |_|\\\\__,_|_| |_| |_|
+██╗    ██╗ █████╗ ███████╗ █████╗ ██████╗      ██████╗██╗     ██╗
+██║    ██║██╔══██╗██╔════╝██╔══██╗██╔══██╗    ██╔════╝██║     ██║
+██║ █╗ ██║███████║███████╗███████║██████╔╝    ██║     ██║     ██║
+██║███╗██║██╔══██║╚════██║██╔══██║██╔═══╝     ██║     ██║     ██║
+╚███╔███╔╝██║  ██║███████║██║  ██║██║         ╚██████╗███████╗██║
+ ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝          ╚═════╝╚══════╝╚═╝
+                                                                 
 `;
 
 class WinAssist {
@@ -33,6 +31,16 @@ class WinAssist {
         this.logger = new Logger();
         this.achievements = new Achievements();
         this.version = '1.0.0';
+
+        // Inyección de Dependencias
+        this.fileCommands = new FileCommands(this.config, this.logger);
+        this.folderCommands = new FolderCommands(this.config, this.logger);
+        this.exploreCommands = new ExploreCommands(this.config, this.logger);
+        this.favoritesCommands = new FavoritesCommands(this.config, this.logger);
+        this.historyCommands = new HistoryCommands(this.config, this.logger);
+        this.assistantCommands = new AssistantCommands(this.config, this.logger);
+        this.systemCommands = new SystemCommands(this.config, this.logger);
+        this.easterEggs = EasterEggs; // Instancia estática
     }
 
     showWelcome() {
@@ -57,149 +65,149 @@ class WinAssist {
             .option('-t, --type <type>', 'Filtrar por tipo')
             .option('-s, --sort <field>', 'Ordenar por campo')
             .option('-r, --reverse', 'Orden inverso')
-            .action(ExploreCommands.list);
+            .action(this.exploreCommands.list.bind(this.exploreCommands));
 
         program
             .command('tree [path]')
             .description('Muestra estructura en árbol')
             .option('-d, --depth <depth>', 'Profundidad máxima', '3')
-            .action(ExploreCommands.tree);
+            .action(this.exploreCommands.tree.bind(this.exploreCommands));
 
         program
             .command('find <pattern>')
             .description('Busca archivos')
             .option('-p, --path <path>', 'Ruta de búsqueda', '.')
             .option('-e, --extension <ext>', 'Filtrar por extensión')
-            .action(ExploreCommands.find);
+            .action(this.exploreCommands.find.bind(this.exploreCommands));
 
         // Archivos
         program
             .command('open <file>')
             .description('Abre archivo')
-            .action(FileCommands.open);
+            .action(this.fileCommands.open.bind(this.fileCommands));
 
         program
             .command('read <file>')
             .description('Lee archivo')
             .option('-l, --lines <number>', 'Número de líneas')
-            .action(FileCommands.read);
+            .action(this.fileCommands.read.bind(this.fileCommands));
 
         program
             .command('copy <source> <destination>')
             .description('Copia archivos')
             .option('-f, --force', 'Sobrescribir')
-            .action(FileCommands.copy);
+            .action(this.fileCommands.copy.bind(this.fileCommands));
 
         program
             .command('move <source> <destination>')
             .description('Mueve archivos')
-            .action(FileCommands.move);
+            .action(this.fileCommands.move.bind(this.fileCommands));
 
         program
             .command('delete <file>')
             .description('Elimina archivos')
             .option('-y, --yes', 'Confirmar automáticamente')
-            .action(FileCommands.delete);
+            .action(this.fileCommands.delete.bind(this.fileCommands));
 
         // Carpetas
         program
             .command('mkdir <name>')
             .description('Crea carpeta')
             .option('-p, --parents', 'Crear padres')
-            .action(FolderCommands.mkdir);
+            .action(this.folderCommands.mkdir.bind(this.folderCommands));
 
         program
             .command('rmdir <name>')
             .description('Elimina carpeta')
             .option('-r, --recursive', 'Recursivo')
-            .action(FolderCommands.rmdir);
+            .action(this.folderCommands.rmdir.bind(this.folderCommands));
 
         program
             .command('cd <path>')
             .description('Cambia directorio')
-            .action(FolderCommands.cd);
+            .action(this.folderCommands.cd.bind(this.folderCommands));
 
         // Favoritos
         program
             .command('fav')
             .description('Lista favoritos')
-            .action(FavoritesCommands.list);
+            .action(this.favoritesCommands.list.bind(this.favoritesCommands));
 
         program
             .command('fav-add <path>')
             .description('Agrega favorito')
             .option('-n, --name <name>', 'Nombre')
-            .action(FavoritesCommands.add);
+            .action(this.favoritesCommands.add.bind(this.favoritesCommands));
 
         program
             .command('fav-remove <name>')
             .description('Elimina favorito')
-            .action(FavoritesCommands.remove);
+            .action(this.favoritesCommands.remove.bind(this.favoritesCommands));
 
         program
             .command('fav-go <name>')
             .description('Ir a favorito')
-            .action(FavoritesCommands.go);
+            .action(this.favoritesCommands.go.bind(this.favoritesCommands));
 
         // Historial
         program
             .command('history')
             .description('Muestra historial')
             .option('-n, --number <number>', 'Cantidad', '20')
-            .action(HistoryCommands.show);
+            .action(this.historyCommands.show.bind(this.historyCommands));
 
         program
             .command('history-clear')
             .description('Limpia historial')
-            .action(HistoryCommands.clear);
+            .action(this.historyCommands.clear.bind(this.historyCommands));
 
         // Asistente
         program
             .command('ask <question>')
             .description('Pregunta al asistente')
-            .action(AssistantCommands.ask);
+            .action(this.assistantCommands.ask.bind(this.assistantCommands));
 
         program
             .command('suggest')
             .description('Obtiene sugerencias')
-            .action(AssistantCommands.suggest);
+            .action(this.assistantCommands.suggest.bind(this.assistantCommands));
 
         // Sistema
         program
             .command('dashboard')
             .description('Dashboard del sistema')
-            .action(SystemCommands.dashboard);
+            .action(this.systemCommands.dashboard.bind(this.systemCommands));
 
         program
             .command('config')
             .description('Configuración')
-            .action(SystemCommands.config);
+            .action(this.systemCommands.config.bind(this.systemCommands));
 
         program
             .command('achievements')
             .description('Muestra logros')
-            .action(SystemCommands.achievements);
+            .action(this.systemCommands.achievements.bind(this.systemCommands));
 
         program
             .command('theme <name>')
             .description('Cambia tema')
-            .action(SystemCommands.theme);
+            .action(this.systemCommands.theme.bind(this.systemCommands));
 
         // Easter Eggs
         program
             .command('matrix')
             .description('???')
-            .action(EasterEggs.matrix);
+            .action(this.easterEggs.matrix.bind(this.easterEggs));
 
         program
             .command('hack')
             .description('???')
-            .action(EasterEggs.hack);
+            .action(this.easterEggs.hack.bind(this.easterEggs));
 
         program
             .command('wisdom')
             .description('???')
-            .action(EasterEggs.wisdom);
+            .action(this.easterEggs.wisdom.bind(this.easterEggs));
     }
 
     init() {
