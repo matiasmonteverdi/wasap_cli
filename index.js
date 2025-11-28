@@ -65,149 +65,149 @@ class WinAssist {
             .option('-t, --type <type>', 'Filtrar por tipo')
             .option('-s, --sort <field>', 'Ordenar por campo')
             .option('-r, --reverse', 'Orden inverso')
-            .action(this.exploreCommands.list.bind(this.exploreCommands));
+            .action((...args) => this.exploreCommands.list(...args));
 
         program
             .command('tree [path]')
             .description('Muestra estructura en árbol')
             .option('-d, --depth <depth>', 'Profundidad máxima', '3')
-            .action(this.exploreCommands.tree.bind(this.exploreCommands));
+            .action((...args) => this.exploreCommands.tree(...args));
 
         program
             .command('find <pattern>')
             .description('Busca archivos')
             .option('-p, --path <path>', 'Ruta de búsqueda', '.')
             .option('-e, --extension <ext>', 'Filtrar por extensión')
-            .action(this.exploreCommands.find.bind(this.exploreCommands));
+            .action((...args) => this.exploreCommands.find(...args));
 
         // Archivos
         program
             .command('open <file>')
             .description('Abre archivo')
-            .action(this.fileCommands.open.bind(this.fileCommands));
+            .action((...args) => this.fileCommands.open(...args));
 
         program
             .command('read <file>')
             .description('Lee archivo')
             .option('-l, --lines <number>', 'Número de líneas')
-            .action(this.fileCommands.read.bind(this.fileCommands));
+            .action((...args) => this.fileCommands.read(...args));
 
         program
             .command('copy <source> <destination>')
             .description('Copia archivos')
             .option('-f, --force', 'Sobrescribir')
-            .action(this.fileCommands.copy.bind(this.fileCommands));
+            .action((...args) => this.fileCommands.copy(...args));
 
         program
             .command('move <source> <destination>')
             .description('Mueve archivos')
-            .action(this.fileCommands.move.bind(this.fileCommands));
+            .action((...args) => this.fileCommands.move(...args));
 
         program
             .command('delete <file>')
             .description('Elimina archivos')
             .option('-y, --yes', 'Confirmar automáticamente')
-            .action(this.fileCommands.delete.bind(this.fileCommands));
+            .action((...args) => this.fileCommands.delete(...args));
 
         // Carpetas
         program
             .command('mkdir <name>')
             .description('Crea carpeta')
             .option('-p, --parents', 'Crear padres')
-            .action(this.folderCommands.mkdir.bind(this.folderCommands));
+            .action((...args) => this.folderCommands.mkdir(...args));
 
         program
             .command('rmdir <name>')
             .description('Elimina carpeta')
             .option('-r, --recursive', 'Recursivo')
-            .action(this.folderCommands.rmdir.bind(this.folderCommands));
+            .action((...args) => this.folderCommands.rmdir(...args));
 
         program
             .command('cd <path>')
             .description('Cambia directorio')
-            .action(this.folderCommands.cd.bind(this.folderCommands));
+            .action((...args) => this.folderCommands.cd(...args));
 
         // Favoritos
         program
             .command('fav')
             .description('Lista favoritos')
-            .action(this.favoritesCommands.list.bind(this.favoritesCommands));
+            .action((...args) => this.favoritesCommands.list(...args));
 
         program
             .command('fav-add <path>')
             .description('Agrega favorito')
             .option('-n, --name <name>', 'Nombre')
-            .action(this.favoritesCommands.add.bind(this.favoritesCommands));
+            .action((...args) => this.favoritesCommands.add(...args));
 
         program
             .command('fav-remove <name>')
             .description('Elimina favorito')
-            .action(this.favoritesCommands.remove.bind(this.favoritesCommands));
+            .action((...args) => this.favoritesCommands.remove(...args));
 
         program
             .command('fav-go <name>')
             .description('Ir a favorito')
-            .action(this.favoritesCommands.go.bind(this.favoritesCommands));
+            .action((...args) => this.favoritesCommands.go(...args));
 
         // Historial
         program
             .command('history')
             .description('Muestra historial')
             .option('-n, --number <number>', 'Cantidad', '20')
-            .action(this.historyCommands.show.bind(this.historyCommands));
+            .action((...args) => this.historyCommands.show(...args));
 
         program
             .command('history-clear')
             .description('Limpia historial')
-            .action(this.historyCommands.clear.bind(this.historyCommands));
+            .action((...args) => this.historyCommands.clear(...args));
 
         // Asistente
         program
             .command('ask <question>')
             .description('Pregunta al asistente')
-            .action(this.assistantCommands.ask.bind(this.assistantCommands));
+            .action((...args) => this.assistantCommands.ask(...args));
 
         program
             .command('suggest')
             .description('Obtiene sugerencias')
-            .action(this.assistantCommands.suggest.bind(this.assistantCommands));
+            .action((...args) => this.assistantCommands.suggest(...args));
 
         // Sistema
         program
             .command('dashboard')
             .description('Dashboard del sistema')
-            .action(this.systemCommands.dashboard.bind(this.systemCommands));
+            .action((...args) => this.systemCommands.dashboard(...args));
 
         program
             .command('config')
             .description('Configuración')
-            .action(this.systemCommands.config.bind(this.systemCommands));
+            .action((...args) => this.systemCommands.config(...args));
 
         program
             .command('achievements')
             .description('Muestra logros')
-            .action(this.systemCommands.achievements.bind(this.systemCommands));
+            .action((...args) => this.systemCommands.achievements(...args));
 
         program
             .command('theme <name>')
             .description('Cambia tema')
-            .action(this.systemCommands.theme.bind(this.systemCommands));
+            .action((...args) => this.systemCommands.theme(...args));
 
         // Easter Eggs
         program
             .command('matrix')
             .description('???')
-            .action(this.easterEggs.matrix.bind(this.easterEggs));
+            .action((...args) => this.easterEggs.matrix(...args));
 
         program
             .command('hack')
             .description('???')
-            .action(this.easterEggs.hack.bind(this.easterEggs));
+            .action((...args) => this.easterEggs.hack(...args));
 
         program
             .command('wisdom')
             .description('???')
-            .action(this.easterEggs.wisdom.bind(this.easterEggs));
+            .action((...args) => this.easterEggs.wisdom(...args));
     }
 
     init() {
